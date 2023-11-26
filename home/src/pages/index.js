@@ -45,47 +45,6 @@ function Home() {
               <p className="hero__subtitle">
                 <Translate>slogan</Translate>
               </p>
-              <div className={styles.social}>
-                <a href="https://gitter.im/hertzbeat/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge">
-                  <img
-                      src={'https://badges.gitter.im/hertzbeat/community.svg'}
-                      alt={''}
-                  />
-                </a>
-                <a href="https://github.com/dromara/hertzbeat">
-                  <img src={cdnTransfer('/img/badge/web-monitor.svg')} alt={''} />
-                </a>
-                <a href="https://github.com/dromara/hertzbeat">
-                  <img src={cdnTransfer('/img/badge/ping-connect.svg')} alt={''} />
-                </a>
-                <a href="https://github.com/dromara/hertzbeat">
-                  <img
-                      src={cdnTransfer('/img/badge/port-available.svg')}
-                      alt={''}
-                  />
-                </a>
-                <a href="https://github.com/dromara/hertzbeat">
-                  <img
-                      src={cdnTransfer('/img/badge/database-monitor.svg')}
-                      alt={''}
-                  />
-                </a>
-                <a href="https://github.com/dromara/hertzbeat">
-                  <img src={cdnTransfer('/img/badge/os-monitor.svg')} alt={''} />
-                </a>
-                <a href="https://github.com/dromara/hertzbeat">
-                  <img src={cdnTransfer('/img/badge/network-monitor.svg')} alt={''} />
-                </a>
-                <a href="https://github.com/dromara/hertzbeat">
-                  <img
-                      src={cdnTransfer('/img/badge/custom-monitor.svg')}
-                      alt={''}
-                  />
-                </a>
-                <a href="https://github.com/dromara/hertzbeat">
-                  <img src={cdnTransfer('/img/badge/alert.svg')} alt={''} />
-                </a>
-              </div>
               <div className={styles.buttons}>
                 <Link
                     to="/docs/"
@@ -157,19 +116,7 @@ function Home() {
                 <SwiperSlide>
                   <img
                       style={{ width: '1000px', display: 'block', margin: '0 auto' }}
-                      src={useBaseUrl('/img/home/3.png')}
-                  />
-                </SwiperSlide>
-                <SwiperSlide>
-                  <img
-                      style={{ width: '1000px', display: 'block', margin: '0 auto' }}
                       src={useBaseUrl('/img/home/4.png')}
-                  />
-                </SwiperSlide>
-                <SwiperSlide>
-                  <img
-                      style={{ width: '1000px', display: 'block', margin: '0 auto' }}
-                      src={useBaseUrl('/img/home/5.png')}
                   />
                 </SwiperSlide>
                 <SwiperSlide>

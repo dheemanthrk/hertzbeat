@@ -51,8 +51,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import static org.dromara.hertzbeat.common.constants.CommonConstants.ALERT_STATUS_CODE_PENDING;
-import static org.dromara.hertzbeat.common.constants.CommonConstants.ALERT_STATUS_CODE_SOLVED;
+import static org.dromara.hertzbeat.common.constants.CommonConstants.*;
 
 /**
  * Calculate alarms based on the alarm definition rules and collected data
@@ -70,7 +69,7 @@ public class CalculateAlarm {
      * The alarm in the process is triggered
      * 触发中告警信息
      * key - monitorId+alertDefineId 为普通阈值告警 ｜ The alarm is a common threshold alarm
-     * key - monitorId 为监控状态可用性可达性告警 ｜ Indicates the monitoring status availability reachability alarm
+     * key - monitorId 为任务状态可用性可达性告警 ｜ Indicates the monitoring status availability reachability alarm
      */
     private final Map<String, Alert> triggeredAlertMap;
     /**
@@ -101,7 +100,12 @@ public class CalculateAlarm {
         List<Monitor> monitors = monitorDao.findMonitorsByStatus(CommonConstants.UN_AVAILABLE_CODE);
         if (monitors != null) {
             for (Monitor monitor : monitors) {
-                this.notRecoveredAlertMap.put(monitor.getId() + CommonConstants.AVAILABILITY, Alert.builder().build());
+                HashMap<String, String> tags = new HashMap<>(8);
+                tags.put(TAG_MONITOR_ID, String.valueOf(monitor.getId()));
+                tags.put(TAG_MONITOR_NAME, monitor.getName());
+                tags.put(TAG_MONITOR_APP, monitor.getApp());
+                this.notRecoveredAlertMap.put(monitor.getId() + CommonConstants.AVAILABILITY,
+                        Alert.builder().tags(tags).target(AVAILABILITY).status(UN_AVAILABLE_CODE).build());
             }
         }
         startCalculate();
@@ -115,8 +119,10 @@ public class CalculateAlarm {
                     if (metricsData != null) {
                         calculate(metricsData);
                     }
+                } catch (InterruptedException ignored) {
+                    
                 } catch (Exception e) {
-                    log.error(e.getMessage());
+                    log.error("calculate alarm error: {}.", e.getMessage(), e);
                 }
             }
         };
@@ -131,7 +137,7 @@ public class CalculateAlarm {
         String app = metricsData.getApp();
         String metrics = metricsData.getMetrics();
         // If the indicator group whose scheduling priority is 0 has the status of collecting response data UN_REACHABLE/UN_CONNECTABLE, the highest severity alarm is generated to monitor the status change
-        // 先判断调度优先级为0的指标组采集响应数据状态 UN_REACHABLE/UN_CONNECTABLE 则需发最高级别告警进行监控状态变更
+        // 先判断调度优先级为0的指标组采集响应数据状态 UN_REACHABLE/UN_CONNECTABLE 则需发最高级别告警进行任务状态变更
         if (metricsData.getPriority() == 0) {
             handlerAvailableMetrics(monitorId, app, metricsData);
         }
@@ -372,7 +378,7 @@ public class CalculateAlarm {
         } else {
             // Check whether an availability or unreachable alarm is generated before the association monitoring
             // and send a clear alarm to clear the monitoring status
-            // 判断关联监控之前是否有可用性或者不可达告警,发送恢复告警进行监控状态恢复
+            // 判断关联监控之前是否有可用性或者不可达告警,发送恢复告警进行任务状态恢复
             String notResolvedAlertKey = monitorId + CommonConstants.AVAILABILITY;
             Alert notResolvedAlert = notRecoveredAlertMap.remove(notResolvedAlertKey);
             if (notResolvedAlert != null) {
